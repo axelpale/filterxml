@@ -43,18 +43,18 @@ Let us remove Style tags from a Keyhole Markup Language (KML) file:
     <kml>
       <Document>
         <name>Awesome locations</name>
-        <Style id="s_ylw-pushpin060">
-      		<IconStyle>
-      			<scale>1.1</scale>
-      			<Icon>
-      				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-      			</Icon>
-      			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
-      		</IconStyle>
-      		<PolyStyle>
-      			<fill>0</fill>
-      		</PolyStyle>
-      	</Style>
+          <Style id="s_ylw-pushpin060">
+            <IconStyle>
+              <scale>1.1</scale>
+              <Icon>
+                <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+              </Icon>
+              <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+            </IconStyle>
+          <PolyStyle>
+            <fill>0</fill>
+          </PolyStyle>
+        </Style>
         <Placemark>
           <name>Reykjavik</name>
           <Point>
