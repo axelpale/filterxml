@@ -5,16 +5,34 @@ var xpath = require('xpath');
 var parser = new xmldom.DOMParser();
 var serializer = new xmldom.XMLSerializer();
 
-module.exports = function (patterns, xmlIn, callback) {
+module.exports = function (xmlIn, patterns, namespaces, callback) {
+  // Parameters:
+  //   xmlIn
+  //     string representing XML document
+  //   patterns
+  //     array of XPath strings
+  //   namespaces
+  //     a map from prefix strings to namespace URI strings
+  //   callback
+  //     function (err, xmlOut)
+
+  if (typeof xmlIn !== 'string') {
+    // If Buffer
+    xmlIn = xmlIn.toString();
+  }
 
   var root = parser.parseFromString(xmlIn, 'text/xml');
+  var selector = xpath.useNamespaces(namespaces);
 
-  // console.log('root', root);
-  // console.log('root.parentNode', root.parentNode);
+  // Detect if string has at least one non-whitespace character
+  var nonspaceDetector = /\S/;
+
+  //console.log('namespaceURI', root.documentElement.namespaceURI);
+  //console.log('root', root);
   // console.log('patterns', patterns);
 
   // Remove all nodes that match a XPath pattern
-  var i, j, pattern, nodes, n;
+  var i, j, pattern, nodes, n, parent, prev;
   var rootRemoved = false;
 
   for (i = 0; i < patterns.length; i += 1) {
@@ -24,19 +42,39 @@ module.exports = function (patterns, xmlIn, callback) {
       pattern = '//' + pattern;
     }
 
-    nodes = xpath.select(pattern, root);
+    //console.log('pattern', pattern);
+
+    //evaluator = xpath.parse(pattern);
+    //console.log('evaluator', evaluator);
+    nodes = selector(pattern, root);
+
+    //console.log('matched_nodes', nodes);
 
     //console.log('xpath.select(<pattern>, root)', nodes);
     for (j = 0; j < nodes.length; j += 1) {
       n = nodes[j];
 
-      if (n.parentNode === root) {
-        // console.log('We found root');
+      //console.log(n.previousSibling.constructor.name);
+
+      parent = n.parentNode;
+      prev = n.previousSibling;
+
+      if (parent === root) {
+        // console.log('We found document node');
         rootRemoved = true;
         break;
       }
 
-      n.parentNode.removeChild(n);
+      // Okay, n will be removed.
+      // We like to remove also the preceding whitespace if there is some.
+      // This prevents empty lines when the input xml is nicely indented.
+      if (prev && prev.constructor.name === 'Text') {
+        if (!nonspaceDetector.test(prev.data)) {
+          // Only whitespace. Remove.
+          parent.removeChild(prev);
+        }
+      }
+      parent.removeChild(n);
     }
 
     if (rootRemoved) {

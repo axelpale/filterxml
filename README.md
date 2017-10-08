@@ -10,15 +10,18 @@ Keep it simple! Here is a Node.js module to remove unnecessary XML nodes that ma
 
 ## Usage
 
-    filterxml(patterns, xmlIn, function callback(err, xmlOut) { ... })
+    filterxml(xmlIn, patterns, namespaces, function (err, xmlOut) { ... })
 
 Where
-- `patterns` is an array of XPath expressions, like 'book', '/bookstore', or '//title'. The matching XML nodes will be removed.
 - `xmlIn` is a string representing the input XML document.
+- `patterns` is an array of XPath expressions, like 'book', '/bookstore/book', or '//html:title'. The matching XML nodes will be removed.
+- `namespaces` is a map from prefixes to namespace URIs, for example `{ html: 'http://www.w3.org/TR/html4/' }`
 - `xmlOut` is a string representing the filtered output XML document.
 
 
 ## Example
+
+Let us filter out all `book` nodes:
 
     const xmlIn = '<bookstore>' +
         '<book>Animal Farm</book>' +
@@ -26,7 +29,7 @@ Where
         '<essay>Reflections on Writing</essay>' +
       '</bookstore>';
 
-    filterxml(['book'], xmlIn, function (err, xmlOut) {
+    filterxml(xmlIn, ['book'], {}, function (err, xmlOut) {
       if (err) { throw err; }
       console.log(xmlOut)
     });
@@ -35,12 +38,13 @@ Outputs:
 
     <bookstore><essay>Reflections on Writing</essay></bookstore>
 
+
 ## Real-world example
 
 Let us remove Style tags from a Keyhole Markup Language (KML) file:
 
     <?xml version="1.0" encoding="UTF-8"?>
-    <kml>
+    <kml xmlns="http://www.opengis.net/kml/2.2">
       <Document>
         <name>Awesome locations</name>
         <Style id="s_ylw-pushpin060">
@@ -70,13 +74,17 @@ We read the file, filter it, and save the result.
     var fs = require('fs');
 
     var xmlIn = fs.readFileSync('./norway.kml');
+    var patterns = ['kml:Style'];
+    var namespaces = {
+      'kml': 'http://www.opengis.net/kml/2.2',
+    };
 
-    filterxml(['Style'], xmlIn, function (err, xmlOut) {
+    filterxml(xmlIn, patterns, namespaces, function (err, xmlOut) {
       if (err) { throw err; }
       fs.writeFileSync('./norway-simplified.kml', xmlOut);
     });
 
-The result is, of course:
+The resulting `norway-simplified.kml`:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <kml>
@@ -90,7 +98,6 @@ The result is, of course:
         </Placemark>
       </Document>
     </kml>
-
 
 
 ## Licence
