@@ -20,6 +20,13 @@ Where
 - `namespaces` is a map from prefixes to namespace URIs, for example `{ html: 'http://www.w3.org/TR/html4/' }`
 - `xmlOut` is a string representing the filtered output XML document.
 
+Common XPath expressions to match nodes include:
+- `x:book` to match all book nodes under a namespace associated with the `x` prefix in `namespaces`.
+- `x:bookstore/x:book` to match all books **directly** under a bookstore.
+- `x:bookstore//x:book` to match all books **somewhere** under a bookstore.
+- `x:bookstore/x:book[1]` to match **first** book directly under a bookstore.
+- `book` to match all book nodes that **are not** under a namespace. This is a quite rare situation in real-world XML documents.
+
 
 ## Example
 
