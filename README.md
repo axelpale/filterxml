@@ -68,15 +68,15 @@ Let us remove Style tags from a Keyhole Markup Language (KML) file:
       </Document>
     </kml>
 
-We read the file, filter it, and save the result.
+We read the file, filter it, and save the result. Note how we must add a namespace prefix into our pattern to match nodes under the namespace defined in `kml` node. Note also how we must associate any used prefix with a namespace URI.
 
     var filterxml = require('filterxml');
     var fs = require('fs');
 
     var xmlIn = fs.readFileSync('./norway.kml');
-    var patterns = ['kml:Style'];
+    var patterns = ['x:Style'];
     var namespaces = {
-      'kml': 'http://www.opengis.net/kml/2.2',
+      'x': 'http://www.opengis.net/kml/2.2',
     };
 
     filterxml(xmlIn, patterns, namespaces, function (err, xmlOut) {
