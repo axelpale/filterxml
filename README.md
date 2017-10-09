@@ -1,5 +1,7 @@
 # filterxml
 
+[![npm version](https://badge.fury.io/js/filterxml.svg)](https://www.npmjs.com/package/filterxml)
+
 Keep it simple! Here is a Node.js module to remove unnecessary XML nodes that match given XPath expressions. It uses [xpath](https://www.npmjs.com/package/xpath) and [xmldom](https://www.npmjs.com/package/xmldom) under the hood.
 
 
