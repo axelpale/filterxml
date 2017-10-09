@@ -5,14 +5,21 @@
 Keep it simple! Here is a Node.js module to remove unnecessary XML nodes that match given XPath expressions. It uses [xpath](https://www.npmjs.com/package/xpath) and [xmldom](https://www.npmjs.com/package/xmldom) under the hood.
 
 
-## Install
+## Command-line usage
 
-    npm install filterxml
+Install with `$ npm install filterxml -g` and then
+
+    $ filterxml -e pattern -n prefix=namespaceURI input.xml output.xml
+
+See `$ filterxml --help` for details.
 
 
-## Usage
+## Node API usage
 
-    filterxml(xmlIn, patterns, namespaces, function (err, xmlOut) { ... })
+Install with `$ npm install filterxml` and then:
+
+    > var filterxml = require('filterxml');
+    > filterxml(xmlIn, patterns, namespaces, function (err, xmlOut) { ... })
 
 Where
 - `xmlIn` is a string representing the input XML document.
