@@ -32,7 +32,7 @@ module.exports = function (xmlIn, patterns, namespaces, callback) {
   // console.log('patterns', patterns);
 
   // Remove all nodes that match a XPath pattern
-  var i, j, pattern, nodes, n, parent, prev;
+  var i, j, pattern, nodes, n, parent, prev, prefix, msg;
   var rootRemoved = false;
 
   for (i = 0; i < patterns.length; i += 1) {
@@ -46,7 +46,18 @@ module.exports = function (xmlIn, patterns, namespaces, callback) {
 
     //evaluator = xpath.parse(pattern);
     //console.log('evaluator', evaluator);
-    nodes = selector(pattern, root);
+    try {
+      nodes = selector(pattern, root);
+    } catch (e) {
+      if (e.message.startsWith('Cannot resolve QName')) {
+        prefix = pattern.split(':')[0];
+        msg = 'No namespace associated with prefix ' + prefix +
+          ' in ' + pattern;
+        return callback(new Error(msg));
+      }
+
+      throw e;
+    }
 
     //console.log('matched_nodes', nodes);
 

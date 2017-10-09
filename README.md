@@ -87,7 +87,7 @@ We read the file, filter it, and save the result.
 The resulting `norway-simplified.kml`:
 
     <?xml version="1.0" encoding="UTF-8"?>
-    <kml>
+    <kml xmlns="http://www.opengis.net/kml/2.2">
       <Document>
         <name>Awesome locations</name>
         <Placemark>
@@ -98,6 +98,54 @@ The resulting `norway-simplified.kml`:
         </Placemark>
       </Document>
     </kml>
+
+
+## Working with multiple namespaces
+
+Often XML documents specify multiple namespaces. For example:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+      <Point>
+        <gx:drawOrder>1</gx:drawOrder>
+        <coordinates>25.59176188650433,45.6493071755744,0</coordinates>
+      </Point>
+    </kml>
+
+To match and remove the `gx:drawOrder` node we can **not** just `filterxml(xmlIn, ['gx:drawOrder'], {}, callback)`. The callback would receive an error `No namespace associated with prefix gx in gx:drawOrder`. Instead, we must specify what the prefix `gx` in our XPath pattern means. It misleadingly looks like it has already been specified in the `kml` tag. We cannot blindly trust it. This is because the same prefix can map to different namespace URI in different part of the document:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <mymap>
+      <Places xmlns:kml="http://www.opengis.net/kml/2.2">
+        <kml:Placemark>
+          <kml:name>A place described with OpenGIS markup</kml:name>
+        </kml:Placemark>
+      </Places>
+      <Cities xmlns:kml="http://www.google.com/kml/ext/2.2">
+        <kml:Placemark>
+          <kml:name>A place described with Google's KML markup</kml:name>
+        </kml:Placemark>
+      </Cities
+    </mymap>
+
+Therefore we must always specify the prefixes we use in our XPath patterns. To remove `gx:drawOrder` the following is a valid approach. Note that we can use whatever prefix we want as long as we associate it with a correct namespace URI.
+
+    var patterns = ['foo:drawOrder'];
+    var namespaces = { foo: 'http://www.google.com/kml/ext/2.2' };
+    filterxml(xmlIn, patterns, namespaces, function (err, xmlOut) {
+      ...
+    });
+
+The snippet above results with `xmlOut` equal to:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+      <Point>
+        <coordinates>25.59176188650433,45.6493071755744,0</coordinates>
+      </Point>
+    </kml>
+
+So, always declare your prefixes!
 
 
 ## Licence

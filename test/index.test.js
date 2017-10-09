@@ -77,4 +77,58 @@ describe('filterxml', function () {
     });
   });
 
+  it('should deal with multiple namespaces', function (done) {
+
+    // Let us remove gx:drawOrder
+    const xmlIn = '<?xml version="1.0" encoding="utf-8"?>' +
+      '<kml xmlns="http://www.opengis.net/kml/2.2" ' +
+      'xmlns:gx="http://www.google.com/kml/ext/2.2">' +
+        '<Document>' +
+          '<Placemark>' +
+            '<name>Portland</name>' +
+            '<Point>' +
+              '<gx:drawOrder>1</gx:drawOrder>' +
+              '<coordinates>-122.681944,45.52,0</coordinates>' +
+            '</Point>' +
+          '</Placemark>' +
+        '</Document>' +
+      '</kml>';
+
+    const ps = ['gkml:drawOrder'];
+    const ns = { gkml: 'http://www.google.com/kml/ext/2.2' };
+
+    filterxml(xmlIn, ps, ns, function (err, xmlOut) {
+
+      var xmlOutGoal = '<?xml version="1.0" encoding="utf-8"?>' +
+        '<kml xmlns="http://www.opengis.net/kml/2.2" ' +
+        'xmlns:gx="http://www.google.com/kml/ext/2.2">' +
+          '<Document>' +
+            '<Placemark>' +
+              '<name>Portland</name>' +
+              '<Point>' +
+                '<coordinates>-122.681944,45.52,0</coordinates>' +
+              '</Point>' +
+            '</Placemark>' +
+          '</Document>' +
+        '</kml>';
+
+      xmlOut.should.equal(xmlOutGoal);
+      done();
+    });
+  });
+
+  it('should notify about missing namespace', function (done) {
+
+    const xmlIn = '<?xml version="1.0" encoding="utf-8"?>' +
+      '<kml xmlns="http://www.opengis.net/kml/2.2">' +
+        '<Document/>' +
+      '</kml>';
+    const ps = ['kml:Document'];
+
+    filterxml(xmlIn, ps, {}, function (err) {
+      (/namespace/).test(err.message);
+      done();
+    });
+  });
+
 });
