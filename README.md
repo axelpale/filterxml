@@ -1,9 +1,12 @@
 # filterxml
 
-[![npm version](https://badge.fury.io/js/filterxml.svg)](https://www.npmjs.com/package/filterxml)
+[![npm](https://img.shields.io/npm/v/filterxml.svg?colorB=green)](https://www.npmjs.com/package/filterxml)
+[![npm](https://img.shields.io/npm/dm/filterxml.svg)](https://www.npmjs.com/package/filterxml)
+[![Travis](https://img.shields.io/travis/axelpale/filterxml.svg)](https://travis-ci.org/axelpale/filterxml)
 
 Keep it simple! Here is a Node.js module to remove unnecessary XML nodes that match given XPath expressions. It uses [xpath](https://www.npmjs.com/package/xpath) and [xmldom](https://www.npmjs.com/package/xmldom) under the hood.
 
+![Logo](logo.png?raw=true "Fight the power!")
 
 ## Command-line usage
 
@@ -11,7 +14,13 @@ Install with `$ npm install filterxml -g` and then
 
     $ filterxml -e pattern -n prefix=namespaceURI input.xml output.xml
 
-See `$ filterxml --help` for details.
+For example, remove `Style` and `StyleMap` from a [Keyhole Markup Language](https://en.wikipedia.org/wiki/Keyhole_Markup_Language) document with:
+
+    $ filterxml -e kml:Style --exclude kml:StyleMap \
+        --namespace kml=http://www.opengis.net/kml/2.2 \
+        source.kml simplified.kml
+
+Specify multiple patterns and namespaces with additional `-e` and `-n` flags. See `filterxml --help` for details.
 
 
 ## Node API usage
