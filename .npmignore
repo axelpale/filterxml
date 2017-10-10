@@ -1,4 +1,6 @@
 .eslintignore
 .eslintrc.js
+.travis.yml
+logo.png
 
 /test
