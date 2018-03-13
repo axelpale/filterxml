@@ -32,7 +32,7 @@ module.exports = function (xmlIn, patterns, namespaces, callback) {
   // console.log('patterns', patterns);
 
   // Remove all nodes that match a XPath pattern
-  var i, j, pattern, nodes, n, parent, prev, prefix, msg;
+  var i, j, pattern, nodes, n, attributeParent, parent, prev, prefix, msg;
   var rootRemoved = false;
 
   for (i = 0; i < patterns.length; i += 1) {
@@ -67,6 +67,12 @@ module.exports = function (xmlIn, patterns, namespaces, callback) {
 
       //console.log(n.previousSibling.constructor.name);
 
+      attributeParent = n.ownerElement;
+      if(attributeParent) {
+        attributeParent.removeAttribute(n.name);
+        break;
+      }
+      
       parent = n.parentNode;
       prev = n.previousSibling;
 
