@@ -1,5 +1,5 @@
 /* eslint-disable max-statements */
-var xmldom = require('xmldom');
+var xmldom = require('@xmldom/xmldom');
 var xpath = require('xpath');
 
 var parser = new xmldom.DOMParser();
