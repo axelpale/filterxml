@@ -1,6 +1,6 @@
-.eslintignore
-.eslintrc.js
-.travis.yml
-logo.png
-
+/.github
 /test
+
+.DS_Store
+.gitignore
+logo.png
