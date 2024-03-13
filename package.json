@@ -29,7 +29,6 @@
     "xpath": "^0.0.34"
   },
   "devDependencies": {
-    "command-line-test": "^1.0.10",
     "diff": "^5.2.0",
     "genversion": "^3.2.0",
     "mocha": "^10.3.0",

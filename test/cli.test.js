@@ -1,6 +1,6 @@
 /* global describe,it */
 
-const CliTest = require('command-line-test')
+const CliTest = require('./cli-test-tool')
 const should = require('should') // eslint-disable-line no-unused-vars
 const temp = require('temp')
 const path = require('path')
