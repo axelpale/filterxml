@@ -1,11 +1,13 @@
 /* eslint-disable max-statements */
-var xmldom = require('@xmldom/xmldom');
-var xpath = require('xpath');
+const xmldom = require('@xmldom/xmldom')
+const xpath = require('xpath')
 
-var parser = new xmldom.DOMParser();
-var serializer = new xmldom.XMLSerializer();
+const parser = new xmldom.DOMParser()
+const serializer = new xmldom.XMLSerializer()
 
 module.exports = function (xmlIn, patterns, namespaces, callback) {
+  // Filter XML
+  //
   // Parameters:
   //   xmlIn
   //     string representing XML document
@@ -18,62 +20,62 @@ module.exports = function (xmlIn, patterns, namespaces, callback) {
 
   if (typeof xmlIn !== 'string') {
     // If Buffer
-    xmlIn = xmlIn.toString();
+    xmlIn = xmlIn.toString()
   }
 
-  var root = parser.parseFromString(xmlIn, 'text/xml');
-  var selector = xpath.useNamespaces(namespaces);
+  const root = parser.parseFromString(xmlIn, 'text/xml')
+  const selector = xpath.useNamespaces(namespaces)
 
   // Detect if string has at least one non-whitespace character
-  var nonspaceDetector = /\S/;
+  const nonspaceDetector = /\S/
 
-  //console.log('namespaceURI', root.documentElement.namespaceURI);
-  //console.log('root', root);
-  // console.log('patterns', patterns);
+  // console.log('namespaceURI', root.documentElement.namespaceURI)
+  // console.log('root', root)
+  // console.log('patterns', patterns)
 
   // Remove all nodes that match a XPath pattern
-  var i, j, pattern, nodes, n, parent, prev, prefix, msg;
-  var rootRemoved = false;
+  let i, j, pattern, nodes, parent, prev
+  let rootRemoved = false
 
   for (i = 0; i < patterns.length; i += 1) {
-    pattern = patterns[i];
+    pattern = patterns[i]
 
     if (pattern[0] !== '/') {
-      pattern = '//' + pattern;
+      pattern = '//' + pattern
     }
 
-    //console.log('pattern', pattern);
+    // console.log('pattern', pattern)
 
-    //evaluator = xpath.parse(pattern);
-    //console.log('evaluator', evaluator);
+    // evaluator = xpath.parse(pattern)
+    // console.log('evaluator', evaluator)
     try {
-      nodes = selector(pattern, root);
+      nodes = selector(pattern, root)
     } catch (e) {
       if (e.message.startsWith('Cannot resolve QName')) {
-        prefix = pattern.split(':')[0];
-        msg = 'No namespace associated with prefix ' + prefix +
-          ' in ' + pattern;
-        return callback(new Error(msg));
+        const prefix = pattern.split(':')[0]
+        const msg = 'No namespace associated with prefix ' + prefix +
+          ' in ' + pattern
+        return callback(new Error(msg))
       }
 
-      throw e;
+      throw e
     }
 
-    //console.log('matched_nodes', nodes);
+    // console.log('matched_nodes', nodes)
+    // console.log('xpath.select(<pattern>, root)', nodes)
 
-    //console.log('xpath.select(<pattern>, root)', nodes);
     for (j = 0; j < nodes.length; j += 1) {
-      n = nodes[j];
+      const n = nodes[j]
 
-      //console.log(n.previousSibling.constructor.name);
+      // console.log(n.previousSibling.constructor.name)
 
-      parent = n.parentNode;
-      prev = n.previousSibling;
+      parent = n.parentNode
+      prev = n.previousSibling
 
       if (parent === root) {
-        // console.log('We found document node');
-        rootRemoved = true;
-        break;
+        // console.log('We found document node')
+        rootRemoved = true
+        break
       }
 
       // Okay, n will be removed.
@@ -82,40 +84,40 @@ module.exports = function (xmlIn, patterns, namespaces, callback) {
       if (prev && prev.constructor.name === 'Text') {
         if (!nonspaceDetector.test(prev.data)) {
           // Only whitespace. Remove.
-          parent.removeChild(prev);
+          parent.removeChild(prev)
         }
       }
-      parent.removeChild(n);
+      parent.removeChild(n)
     }
 
     if (rootRemoved) {
-      break;  // short-circuit
+      break // short-circuit
     }
   }
 
   if (rootRemoved) {
-    return callback(null, '');
+    return callback(null, '')
   }
 
-  // console.log('rootWasNotRemoved');
-  //console.log('root', root);
+  // console.log('rootWasNotRemoved')
+  // console.log('root', root)
 
-  (function serialize() {
-
-    var xmlOut;
-    var isHtml = false;
+  function serialize () {
+    let xmlOut
+    const isHtml = false
     try {
-      xmlOut = serializer.serializeToString(root, isHtml);
+      xmlOut = serializer.serializeToString(root, isHtml)
     } catch (e) {
-      console.error(e);
+      console.error(e)
       if (e instanceof TypeError) {
-        throw e;
+        throw e
       } else {
-        throw e;
+        throw e
       }
     }
 
-    return callback(null, xmlOut);
-  }());
+    return callback(null, xmlOut)
+  }
 
-};
+  serialize()
+}
