@@ -39,7 +39,7 @@
     "temp": "^0.8.3"
   },
   "scripts": {
-    "test": "mocha ; npm run lint",
+    "test": "npm run lint && mocha",
     "test:index": "mocha test/index.test.js",
     "test:cli": "mocha test/cli.test.js",
     "lint": "eslint .",
