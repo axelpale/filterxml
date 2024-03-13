@@ -2,7 +2,7 @@
 
 const filterxml = require('../index')
 const program = require('commander')
-const fs = require('fs-extra')
+const fs = require('fs')
 const v = require('../lib/version')
 
 const increaseVerbosity = function (verb, total) {
