@@ -27,7 +27,7 @@
     "@xmldom/xmldom": "0.8.10",
     "commander": "^2.11.0",
     "fs-extra": "^4.0.2",
-    "xpath": "0.0.24"
+    "xpath": "^0.0.34"
   },
   "devDependencies": {
     "command-line-test": "^1.0.10",
