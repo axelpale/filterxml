@@ -94,7 +94,20 @@ describe('filterxml cli', function () {
       res.stderr.should.equal('')
 
       filecompare(output, goal, function (errc, changes) {
+        // Debug output
+        if (changes.length > 0) {
+          changes.forEach((ch) => {
+            if (ch.added) {
+              console.log('found only in output: ' + ch.value)
+            }
+            if (ch.removed) {
+              console.log('found only in input: ' + ch.value)
+            }
+          })
+        }
+
         changes.should.eql([])
+
         return done()
       })
     })

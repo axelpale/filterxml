@@ -10,13 +10,25 @@ const increaseVerbosity = function (verb, total) {
 }
 
 const collect = function (item, list) {
-  list.push(item)
-  return list
+  return list.concat([item])
 }
 
 const parseNamespaces = function (items) {
   // Transform an array of prefix-namespaceURI pair strings into
   // a map from prefix to namespaceURI.
+  //
+  // Parameters:
+  //   items
+  //     array or undefined.
+  //
+  // Return
+  //   an object
+  //
+
+  if (!items) {
+    items = []
+  }
+
   return items.reduce(function (acc, item) {
     const parts = item.split('=')
 
@@ -30,11 +42,11 @@ const parseNamespaces = function (items) {
   }, {})
 }
 
-const action = function (sourcePath, targetPath) {
+const action = function (sourcePath, targetPath, options, command) {
   // Main CLI action
   //
-  const patterns = program.exclude
-  const namespaces = parseNamespaces(program.namespace)
+  const patterns = options.exclude || []
+  const namespaces = parseNamespaces(options.namespace)
 
   fs.readFile(sourcePath, function (errr, inXml) {
     if (errr) {
@@ -64,9 +76,10 @@ const action = function (sourcePath, targetPath) {
 
 program
   .version(v)
-  .usage('[options] <source> <target>')
   .description('Filter out specific nodes from a source XML file and\n' +
     '  save the resulting XML to the target filepath.')
+  .argument('<source>', 'filepath for XML input')
+  .argument('<target>', 'filepath for XML output')
   .option(
     '-e, --exclude <xpath>',
     'Exclude nodes that match xpath',
@@ -92,14 +105,7 @@ program.on('--help', function () {
   console.log('')
 })
 
-program.parse(process.argv)
+program.showHelpAfterError()
 
-if (program.args.length === 0) {
-  console.error('ERROR: Missing arguments <source> and <target>')
-  program.outputHelp()
-}
-
-if (program.args.length === 1) {
-  console.error('ERROR: Missing argument <target>')
-  program.outputHelp()
-}
+// Parse arguments
+program.parse()
