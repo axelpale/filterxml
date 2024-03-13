@@ -36,7 +36,7 @@
     "mocha": "^4.0.1",
     "should": "^13.1.0",
     "standard": "^17.1.0",
-    "temp": "^0.8.3"
+    "temp": "^0.9.4"
   },
   "scripts": {
     "test": "npm run lint && mocha",

@@ -2,12 +2,15 @@
 
 const CliTest = require('command-line-test')
 const should = require('should') // eslint-disable-line no-unused-vars
-const temp = require('temp').track() // track to remove at exit
+const temp = require('temp')
 const path = require('path')
 const diff = require('diff')
 const fs = require('fs')
 
 const COMMAND = 'bin/filterxml.js'
+
+// Automatically track and remove files at exit
+temp.track()
 
 const filecompare = function (path1, path2, callback) {
   // Parameters:
