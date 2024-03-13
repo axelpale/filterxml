@@ -2,6 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/filterxml.svg?colorB=green)](https://www.npmjs.com/package/filterxml)
 [![npm](https://img.shields.io/npm/dm/filterxml.svg)](https://www.npmjs.com/package/filterxml)
+[![Node Version](https://img.shields.io/node/v/filterxml.svg)](https://github.com/axelpale/filterxml)
 [![GitHub Actions workflow status](https://img.shields.io/github/actions/workflow/status/axelpale/filterxml/filterxml-ci.yml)](https://github.com/axelpale/filterxml/actions/workflows/filterxml-ci.yml)
 
 Keep it simple! Here is a Node.js module to remove unnecessary XML nodes that match given XPath expressions. It uses [xpath](https://www.npmjs.com/package/xpath) and [xmldom](https://www.npmjs.com/package/xmldom) under the hood.
