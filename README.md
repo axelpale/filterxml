@@ -7,11 +7,13 @@
 
 Keep it simple! Here is a Node.js module to remove unnecessary XML nodes that match given XPath expressions. It uses [xpath](https://www.npmjs.com/package/xpath) and [xmldom](https://github.com/xmldom/xmldom) under the hood.
 
+[Command-line usage](#command-line-usage) – [Node API](#node-api-usage) – [Examples](#example) – [Working with namespaces](#working-with-namespaces)
+
 ![Logo](logo.png?raw=true "Fight the power!")
 
 ## Command-line usage
 
-Install with `$ npm install filterxml -g` and then
+Install with `$ npm install filterxml -g` and then:
 
     $ filterxml -e pattern -n prefix=namespaceURI input.xml output.xml
 
@@ -133,7 +135,7 @@ The resulting `norway-simplified.kml`:
     </kml>
 
 
-## Working with multiple namespaces
+## Working with namespaces
 
 Often XML documents specify multiple namespaces. For example:
 
