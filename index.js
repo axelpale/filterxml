@@ -1,6 +1,6 @@
-/* eslint-disable max-statements */
 const xmldom = require('@xmldom/xmldom')
 const xpath = require('xpath')
+const getEOF = require('./lib/getEOF')
 
 const parser = new xmldom.DOMParser()
 const serializer = new xmldom.XMLSerializer()
@@ -32,6 +32,9 @@ module.exports = function (xmlIn, patterns, namespaces, callback) {
   // console.log('namespaceURI', root.documentElement.namespaceURI)
   // console.log('root', root)
   // console.log('patterns', patterns)
+
+  // Preserve end-of-file
+  const endOfFile = getEOF(xmlIn)
 
   // Remove all nodes that match a XPath pattern
   let i, j, pattern, nodes, parent, prev
@@ -91,7 +94,7 @@ module.exports = function (xmlIn, patterns, namespaces, callback) {
     }
 
     if (rootRemoved) {
-      break // short-circuit
+      break // short-circuit because everything got removed.
     }
   }
 
@@ -107,13 +110,16 @@ module.exports = function (xmlIn, patterns, namespaces, callback) {
     const isHtml = false
     try {
       xmlOut = serializer.serializeToString(root, isHtml)
+      // Preserve end-of-file characters
+      xmlOut = xmlOut.trim() + endOfFile
     } catch (e) {
-      console.error(e)
+      // console.error(e)
       if (e instanceof TypeError) {
-        throw e
-      } else {
-        throw e
+        return callback(e)
       }
+
+      // Unknown exception
+      throw e
     }
 
     return callback(null, xmlOut)

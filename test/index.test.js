@@ -128,4 +128,21 @@ describe('filterxml', function () {
       done()
     })
   })
+
+  it('should preserve end-of-file', function (done) {
+    const xmlIn = '<?xml version="1.0" encoding="utf-8"?>' +
+      '<kml xmlns="http://www.opengis.net/kml/2.2">' +
+        '<Document/>' +
+      '</kml>\r\n'
+    const ps = ['kml:Document']
+    const ns = { kml: 'http://www.opengis.net/kml/2.2' }
+
+    filterxml(xmlIn, ps, ns, function (err, xmlOut) {
+      should.equal(err, null)
+      should.equal(xmlOut, '<?xml version="1.0" encoding="utf-8"?>' +
+        '<kml xmlns="http://www.opengis.net/kml/2.2"/>\r\n')
+
+      done()
+    })
+  })
 })
