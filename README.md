@@ -45,6 +45,13 @@ Common XPath expressions to match nodes include:
 - `book` to match all book nodes that **are not** under a namespace. This is a quite rare situation in real-world XML documents.
 
 
+## Limitations
+
+Internally, filterxml depends on [xmldom](https://www.npmjs.com/package/@xmldom/xmldom) that respects the standard Web API [XMLSerializer](https://developer.mozilla.org/en-US/docs/Web/API/XMLSerializer/serializeToString). The serializer can sometimes produce unexpected results:
+- most empty-element tags like `<circle />` will be converted to begin and end tags like `<circle></circle>`.
+- some common empty-element tags like `<meta />` are preserved but will lose the space before the slash like `<meta/>`.
+
+
 ## Example
 
 Let us filter out all `book` nodes:

@@ -78,7 +78,7 @@ module.exports = function (xmlIn, patterns, namespaces, callback) {
         break
       }
 
-      // Okay, n will be removed.
+      // Okay, node n will be removed.
       // We like to remove also the preceding whitespace if there is some.
       // This prevents empty lines when the input xml is nicely indented.
       if (prev && prev.constructor.name === 'Text') {
