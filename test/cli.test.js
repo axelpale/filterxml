@@ -15,9 +15,12 @@ temp.track()
 const filecompare = function (path1, path2, callback) {
   // Parameters:
   //   path1
+  //     primary, the input file path
   //   path2
+  //     secondary, the output file path
   //   callback
   //     function (err, areEqual)
+  //
   fs.readFile(path1, function (e1, data1) {
     if (e1) {
       return callback(e1)
@@ -44,6 +47,18 @@ const filecompare = function (path1, path2, callback) {
       const diffs = changes.filter(function (ch) {
         return ch.added || ch.removed
       })
+
+      // Debug output
+      if (diffs.length > 0) {
+        diffs.forEach((change) => {
+          if (change.added) {
+            console.log('found only in expected value: ' + change.value)
+          }
+          if (change.removed) {
+            console.log('found only in output value:   ' + change.value)
+          }
+        })
+      }
 
       return callback(null, diffs)
     })
@@ -94,17 +109,6 @@ describe('filterxml cli', function () {
       res.stderr.should.equal('')
 
       filecompare(output, goal, function (errc, changes) {
-        // Debug output
-        if (changes.length > 0) {
-          changes.forEach((ch) => {
-            if (ch.added) {
-              console.log('found only in output: ' + ch.value)
-            }
-            if (ch.removed) {
-              console.log('found only in input: ' + ch.value)
-            }
-          })
-        }
 
         changes.should.eql([])
 
