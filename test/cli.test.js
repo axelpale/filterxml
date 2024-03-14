@@ -109,7 +109,37 @@ describe('filterxml cli', function () {
       res.stderr.should.equal('')
 
       filecompare(output, goal, function (errc, changes) {
+        changes.should.eql([])
 
+        return done()
+      })
+    })
+  })
+
+  it('should support multiple excludes and namespaces', function (done) {
+    const clit = new CliTest()
+
+    const source = path.resolve(__dirname, 'fixtures', 'svg.xhtml')
+    const output = temp.openSync().path
+    const goal = path.resolve(__dirname, 'fixtures', 'svg-filtered.xhtml')
+
+    const comm = COMMAND +
+      ' -e svg:a' +
+      ' --exclude xhtml:h1' +
+      ' --namespace svg=http://www.w3.org/2000/svg' +
+      ' -n xhtml=http://www.w3.org/1999/xhtml' +
+      ' ' + source + ' ' + output
+
+    clit.exec(comm, function (err, res) {
+      if (err) {
+        return done(err)
+      }
+
+      // Should not have any output
+      res.stdout.should.equal('')
+      res.stderr.should.equal('')
+
+      filecompare(output, goal, function (errc, changes) {
         changes.should.eql([])
 
         return done()
