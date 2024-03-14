@@ -1,6 +1,6 @@
 {
   "name": "filterxml",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0",
   "description": "Remove XML nodes that match given XPath expressions",
   "keywords": [
     "xml",
