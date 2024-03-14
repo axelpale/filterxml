@@ -2,32 +2,35 @@
 
 [![npm](https://img.shields.io/npm/v/filterxml.svg?colorB=green)](https://www.npmjs.com/package/filterxml)
 [![npm](https://img.shields.io/npm/dm/filterxml.svg)](https://www.npmjs.com/package/filterxml)
-[![Travis](https://img.shields.io/travis/axelpale/filterxml.svg)](https://travis-ci.org/axelpale/filterxml)
+[![Node Version](https://img.shields.io/node/v/filterxml.svg)](https://github.com/axelpale/filterxml)
+[![GitHub Actions workflow status](https://img.shields.io/github/actions/workflow/status/axelpale/filterxml/filterxml-ci.yml)](https://github.com/axelpale/filterxml/actions/workflows/filterxml-ci.yml)
 
-Keep it simple! Here is a Node.js module to remove unnecessary XML nodes that match given XPath expressions. It uses [xpath](https://www.npmjs.com/package/xpath) and [xmldom](https://www.npmjs.com/package/xmldom) under the hood.
+Keep it simple! Here is a Node.js module to remove unnecessary XML nodes that match given XPath expressions. It uses [xpath](https://www.npmjs.com/package/xpath) and [xmldom](https://github.com/xmldom/xmldom) under the hood.
+
+[Command-line usage](#command-line-usage) – [Node API](#node-api-usage) – [Examples](#example) – [Working with namespaces](#working-with-namespaces)
 
 ![Logo](logo.png?raw=true "Fight the power!")
 
 ## Command-line usage
 
-Install with `$ npm install filterxml -g` and then
+Install with `$ npm install filterxml -g` and then:
 
     $ filterxml -e pattern -n prefix=namespaceURI input.xml output.xml
 
 For example, remove `Style` and `StyleMap` from a [Keyhole Markup Language](https://en.wikipedia.org/wiki/Keyhole_Markup_Language) document with:
 
-    $ filterxml -e kml:Style --exclude kml:StyleMap \
+    $ filterxml --exclude kml:Style --exclude kml:StyleMap \
         --namespace kml=http://www.opengis.net/kml/2.2 \
         source.kml simplified.kml
 
-Specify multiple patterns and namespaces with additional `-e` and `-n` flags. See `filterxml --help` for details.
+Specify multiple patterns and namespaces with additional `-e, --exclude` and `-n, --namespace` flags. See `filterxml --help` for details.
 
 
 ## Node API usage
 
 Install with `$ npm install filterxml` and then:
 
-    > var filterxml = require('filterxml');
+    > const filterxml = require('filterxml')
     > filterxml(xmlIn, patterns, namespaces, function (err, xmlOut) { ... })
 
 Where
@@ -40,8 +43,15 @@ Common XPath expressions to match nodes include:
 - `x:book` to match all book nodes under a namespace associated with the `x` prefix in `namespaces`.
 - `x:bookstore/x:book` to match all books **directly** under a bookstore.
 - `x:bookstore//x:book` to match all books **somewhere** under a bookstore.
-- `x:bookstore/x:book[1]` to match **first** book directly under a bookstore.
+- `x:bookstore/x:book[1]` to match the **first** book directly under a bookstore.
 - `book` to match all book nodes that **are not** under a namespace. This is a quite rare situation in real-world XML documents.
+
+
+## Limitations
+
+Internally, filterxml depends on [xmldom](https://www.npmjs.com/package/@xmldom/xmldom) that respects the standard Web API [XMLSerializer](https://developer.mozilla.org/en-US/docs/Web/API/XMLSerializer/serializeToString). The serializer can sometimes produce unexpected results:
+- most empty-element tags like `<circle />` will be converted to begin and end tags like `<circle></circle>`.
+- some common empty-element tags like `<meta />` are preserved but will lose the space before the slash like `<meta/>`.
 
 
 ## Example
@@ -52,12 +62,12 @@ Let us filter out all `book` nodes:
         '<book>Animal Farm</book>' +
         '<book>Nineteen Eighty-Four</book>' +
         '<essay>Reflections on Writing</essay>' +
-      '</bookstore>';
+      '</bookstore>'
 
     filterxml(xmlIn, ['book'], {}, function (err, xmlOut) {
-      if (err) { throw err; }
+      if (err) { throw err }
       console.log(xmlOut)
-    });
+    })
 
 Outputs:
 
@@ -95,19 +105,19 @@ Let us remove Style tags from a Keyhole Markup Language (KML) file:
 
 We read the file, filter it, and save the result. Note how we must add a namespace prefix into our pattern to match nodes under the namespace defined in `kml` node. Note also how we must associate any used prefix with a namespace URI.
 
-    var filterxml = require('filterxml');
-    var fs = require('fs');
+    const filterxml = require('filterxml')
+    const fs = require('fs')
 
-    var xmlIn = fs.readFileSync('./norway.kml');
-    var patterns = ['x:Style'];
-    var namespaces = {
-      'x': 'http://www.opengis.net/kml/2.2',
-    };
+    const xmlIn = fs.readFileSync('./norway.kml')
+    const patterns = ['x:Style']
+    const namespaces = {
+      x: 'http://www.opengis.net/kml/2.2'
+    }
 
     filterxml(xmlIn, patterns, namespaces, function (err, xmlOut) {
-      if (err) { throw err; }
-      fs.writeFileSync('./norway-simplified.kml', xmlOut);
-    });
+      if (err) { throw err }
+      fs.writeFileSync('./norway-simplified.kml', xmlOut)
+    })
 
 The resulting `norway-simplified.kml`:
 
@@ -125,7 +135,7 @@ The resulting `norway-simplified.kml`:
     </kml>
 
 
-## Working with multiple namespaces
+## Working with namespaces
 
 Often XML documents specify multiple namespaces. For example:
 
@@ -155,11 +165,11 @@ To match and remove the `gx:drawOrder` node we can **not** just `filterxml(xmlIn
 
 Therefore we must always specify the prefixes we use in our XPath patterns. To remove `gx:drawOrder` the following is a valid approach. Note that we can use whatever prefix we want as long as we associate it with a correct namespace URI.
 
-    var patterns = ['foo:drawOrder'];
-    var namespaces = { foo: 'http://www.google.com/kml/ext/2.2' };
+    const patterns = ['foo:drawOrder']
+    const namespaces = { foo: 'http://www.google.com/kml/ext/2.2' }
     filterxml(xmlIn, patterns, namespaces, function (err, xmlOut) {
       ...
-    });
+    })
 
 The snippet above results with `xmlOut` equal to:
 

@@ -1,6 +1,6 @@
 {
   "name": "filterxml",
-  "version": "1.1.5",
+  "version": "2.0.0",
   "description": "Remove XML nodes that match given XPath expressions",
   "keywords": [
     "xml",
@@ -24,25 +24,26 @@
   },
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.11.0",
-    "fs-extra": "^4.0.2",
     "@xmldom/xmldom": "0.8.10",
-    "xpath": "0.0.24"
+    "commander": "^8.3.0",
+    "xpath": "^0.0.34"
   },
   "devDependencies": {
-    "command-line-test": "^1.0.10",
-    "diff": "^3.4.0",
-    "eslint": "^4.7.2",
-    "genversion": "^1.1.3",
-    "mocha": "^4.0.1",
+    "diff": "^5.2.0",
+    "genversion": "^3.2.0",
+    "mocha": "^10.3.0",
     "should": "^13.1.0",
-    "temp": "^0.8.3"
+    "standard": "^17.1.0",
+    "temp": "^0.9.4"
+  },
+  "engines": {
+    "node": ">=12.0.0"
   },
   "scripts": {
-    "test": "mocha ; npm run lint",
+    "test": "npm run lint && mocha",
     "test:index": "mocha test/index.test.js",
     "test:cli": "mocha test/cli.test.js",
-    "lint": "eslint .",
+    "lint": "standard",
     "gv": "genversion lib/version.js",
     "release": "npm run gv && npm run test && npm publish"
   }

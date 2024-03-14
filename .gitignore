@@ -27,6 +27,9 @@ build/Release
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
 node_modules
 
+# Include package log only in NPM release but do not push to repository
+package-lock.json
+
 # Users Environment Variables
 .lock-wscript
 

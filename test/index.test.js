@@ -1,51 +1,49 @@
+/* global describe,it */
 
-const filterxml = require('../index');
-const should = require('should');  // eslint-disable-line no-unused-vars
-
+const filterxml = require('../index')
+const should = require('should')
 
 describe('filterxml', function () {
-
   it('should remove single node', function (done) {
-
-    const xmlIn = '<bookstore><book>Animal Farm</book></bookstore>';
+    const xmlIn = '<bookstore><book>Animal Farm</book></bookstore>'
     filterxml(xmlIn, ['book'], {}, function (err, xmlOut) {
-      xmlOut.should.equal('<bookstore/>');
-      done();
-    });
-  });
+      should.equal(err, null)
+      xmlOut.should.equal('<bookstore/>')
+      done()
+    })
+  })
 
   it('should remove all identical nodes', function (done) {
-
     const xmlIn = '<bookstore>' +
         '<book>Animal Farm</book>' +
         '<book>Nineteen Eighty-Four</book>' +
         '<essay>Reflections on Writing</essay>' +
-      '</bookstore>';
+      '</bookstore>'
 
     filterxml(xmlIn, ['book'], {}, function (err, xmlOut) {
+      should.equal(err, null)
       xmlOut.should.equal('<bookstore>' +
           '<essay>Reflections on Writing</essay>' +
-        '</bookstore>');
-      done();
-    });
-  });
+        '</bookstore>')
+      done()
+    })
+  })
 
   it('should remove all sub nodes', function (done) {
-
     const xmlIn = '<bookstore>' +
         '<book>Animal Farm</book>' +
         '<book>Nineteen Eighty-Four</book>' +
         '<essay>Reflections on Writing</essay>' +
-      '</bookstore>';
+      '</bookstore>'
 
     filterxml(xmlIn, ['bookstore'], {}, function (err, xmlOut) {
-      xmlOut.should.equal('');
-      done();
-    });
-  });
+      should.equal(err, null)
+      xmlOut.should.equal('')
+      done()
+    })
+  })
 
   it('should be namespace aware', function (done) {
-
     const xmlIn = '<?xml version="1.0" encoding="utf-8"?>' +
       '<kml xmlns="http://www.opengis.net/kml/2.2">' +
         '<Document>' +
@@ -56,29 +54,29 @@ describe('filterxml', function () {
             '</Point>' +
           '</Placemark>' +
         '</Document>' +
-      '</kml>';
+      '</kml>'
 
-    const ps = ['Placemark', 'kml:Point'];
-    const ns = { 'kml': 'http://www.opengis.net/kml/2.2' };
+    const ps = ['Placemark', 'kml:Point']
+    const ns = { kml: 'http://www.opengis.net/kml/2.2' }
 
     filterxml(xmlIn, ps, ns, function (err, xmlOut) {
+      should.equal(err, null)
 
-      var xmlOutGoal = '<?xml version="1.0" encoding="utf-8"?>' +
+      const xmlOutGoal = '<?xml version="1.0" encoding="utf-8"?>' +
         '<kml xmlns="http://www.opengis.net/kml/2.2">' +
           '<Document>' +
             '<Placemark>' +
               '<name>Portland</name>' +
             '</Placemark>' +
           '</Document>' +
-        '</kml>';
+        '</kml>'
 
-      xmlOut.should.equal(xmlOutGoal);
-      done();
-    });
-  });
+      xmlOut.should.equal(xmlOutGoal)
+      done()
+    })
+  })
 
   it('should deal with multiple namespaces', function (done) {
-
     // Let us remove gx:drawOrder
     const xmlIn = '<?xml version="1.0" encoding="utf-8"?>' +
       '<kml xmlns="http://www.opengis.net/kml/2.2" ' +
@@ -92,14 +90,15 @@ describe('filterxml', function () {
             '</Point>' +
           '</Placemark>' +
         '</Document>' +
-      '</kml>';
+      '</kml>'
 
-    const ps = ['gkml:drawOrder'];
-    const ns = { gkml: 'http://www.google.com/kml/ext/2.2' };
+    const ps = ['gkml:drawOrder']
+    const ns = { gkml: 'http://www.google.com/kml/ext/2.2' }
 
     filterxml(xmlIn, ps, ns, function (err, xmlOut) {
+      should.equal(err, null)
 
-      var xmlOutGoal = '<?xml version="1.0" encoding="utf-8"?>' +
+      const xmlOutGoal = '<?xml version="1.0" encoding="utf-8"?>' +
         '<kml xmlns="http://www.opengis.net/kml/2.2" ' +
         'xmlns:gx="http://www.google.com/kml/ext/2.2">' +
           '<Document>' +
@@ -110,25 +109,40 @@ describe('filterxml', function () {
               '</Point>' +
             '</Placemark>' +
           '</Document>' +
-        '</kml>';
+        '</kml>'
 
-      xmlOut.should.equal(xmlOutGoal);
-      done();
-    });
-  });
+      xmlOut.should.equal(xmlOutGoal)
+      done()
+    })
+  })
 
   it('should notify about missing namespace', function (done) {
-
     const xmlIn = '<?xml version="1.0" encoding="utf-8"?>' +
       '<kml xmlns="http://www.opengis.net/kml/2.2">' +
         '<Document/>' +
-      '</kml>';
-    const ps = ['kml:Document'];
+      '</kml>'
+    const ps = ['kml:Document']
 
     filterxml(xmlIn, ps, {}, function (err) {
-      (/namespace/).test(err.message);
-      done();
-    });
-  });
+      (/namespace/).test(err.message)
+      done()
+    })
+  })
 
-});
+  it('should preserve end-of-file', function (done) {
+    const xmlIn = '<?xml version="1.0" encoding="utf-8"?>' +
+      '<kml xmlns="http://www.opengis.net/kml/2.2">' +
+        '<Document/>' +
+      '</kml>\r\n'
+    const ps = ['kml:Document']
+    const ns = { kml: 'http://www.opengis.net/kml/2.2' }
+
+    filterxml(xmlIn, ps, ns, function (err, xmlOut) {
+      should.equal(err, null)
+      should.equal(xmlOut, '<?xml version="1.0" encoding="utf-8"?>' +
+        '<kml xmlns="http://www.opengis.net/kml/2.2"/>\r\n')
+
+      done()
+    })
+  })
+})
